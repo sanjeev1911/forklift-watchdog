@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
-import { AlertTriangle, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Download } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { drawDetectionsOnCanvas } from "@/lib/objectDetection";
+import { useToast } from "@/hooks/use-toast";
 
 interface Detection {
   label: string;
@@ -27,6 +29,7 @@ export const DetectionResults = ({
   frame,
 }: DetectionResultsProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!frame || !canvasRef.current) return;
@@ -46,16 +49,60 @@ export const DetectionResults = ({
     };
     img.src = frame;
   }, [frame, detections, personDetected]);
+
+  const handleDownload = () => {
+    if (!canvasRef.current) return;
+
+    canvasRef.current.toBlob((blob) => {
+      if (!blob) return;
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `forklift-analysis-${personDetected ? 'BRAKE-TRIGGERED' : 'safe'}-${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Download started",
+        description: "Annotated frame with detections is downloading",
+      });
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Detection Visualization */}
       {frame && (
         <Card className="p-4 bg-card shadow-md">
-          <div className="relative w-full rounded-lg overflow-hidden border-2 border-border">
-            <canvas 
-              ref={canvasRef} 
-              className="w-full h-auto"
-            />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-md font-semibold text-foreground">
+                Analyzed Frame with Detections
+              </h4>
+              <Button
+                onClick={handleDownload}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Download Frame
+              </Button>
+            </div>
+            <div className="relative w-full rounded-lg overflow-hidden border-2 border-border">
+              <canvas 
+                ref={canvasRef} 
+                className="w-full h-auto"
+              />
+              {personDetected && (
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-destructive/90 text-destructive-foreground px-6 py-3 rounded-lg font-bold text-xl shadow-lg animate-pulse">
+                  🛑 BRAKES TRIGGERED
+                </div>
+              )}
+            </div>
           </div>
         </Card>
       )}
