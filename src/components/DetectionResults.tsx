@@ -121,7 +121,7 @@ export const DetectionResults = ({
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground font-mono">
-                  [{detection.box.xmin.toFixed(0)}, {detection.box.ymin.toFixed(0)}, {detection.box.xmax.toFixed(0)}, {detection.box.ymax.toFixed(0)}]
+                  [{detection.box?.xmin?.toFixed(0) || 0}, {detection.box?.ymin?.toFixed(0) || 0}, {detection.box?.xmax?.toFixed(0) || 0}, {detection.box?.ymax?.toFixed(0) || 0}]
                 </div>
               </div>
             ))

@@ -52,8 +52,15 @@ export async function detectObjectsInFrame(
   const detections: Detection[] = results.map((det: any) => ({
     label: det.label,
     score: det.score,
-    box: det.box,
+    box: {
+      xmin: det.box.xmin || 0,
+      ymin: det.box.ymin || 0,
+      xmax: det.box.xmax || 0,
+      ymax: det.box.ymax || 0,
+    },
   }));
+
+  console.log('Detections:', detections); // Debug log
 
   // Check if person detected
   const person_detected = detections.some(
@@ -121,6 +128,8 @@ export function drawDetectionsOnCanvas(
 
   // Draw bounding boxes
   detections.forEach((det) => {
+    if (!det.box) return; // Safety check
+    
     const { xmin, ymin, xmax, ymax } = det.box;
     const width = xmax - xmin;
     const height = ymax - ymin;
