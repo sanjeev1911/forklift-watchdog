@@ -3,9 +3,10 @@ import { Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { processVideoFirstFrame } from "@/lib/objectDetection";
 
 interface VideoUploaderProps {
-  onUpload: (file: File) => void;
+  onUpload: (result: any) => void;
   isProcessing: boolean;
 }
 
@@ -49,9 +50,32 @@ export const VideoUploader = ({ onUpload, isProcessing }: VideoUploaderProps) =>
     }
   };
 
-  const handleAnalyze = () => {
-    if (selectedFile) {
-      onUpload(selectedFile);
+  const handleAnalyze = async () => {
+    if (!selectedFile) return;
+
+    try {
+      toast({
+        title: "Loading AI model...",
+        description: "This may take a moment on first run",
+      });
+
+      const result = await processVideoFirstFrame(selectedFile);
+      
+      onUpload(result);
+      
+      toast({
+        title: "Analysis complete",
+        description: result.person_detected 
+          ? "⚠️ Person detected - Brakes triggered!" 
+          : "✓ No safety hazards detected",
+      });
+    } catch (error) {
+      console.error('Analysis error:', error);
+      toast({
+        title: "Analysis failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
     }
   };
 

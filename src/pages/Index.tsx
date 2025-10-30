@@ -6,13 +6,19 @@ import { useToast } from "@/hooks/use-toast";
 
 interface Detection {
   label: string;
-  confidence: number;
-  box: number[];
+  score: number;
+  box: {
+    xmin: number;
+    ymin: number;
+    xmax: number;
+    ymax: number;
+  };
 }
 
 interface DetectionResponse {
   person_detected: boolean;
   detections: Detection[];
+  frame?: string;
 }
 
 const Index = () => {
@@ -20,46 +26,10 @@ const Index = () => {
   const [results, setResults] = useState<DetectionResponse | null>(null);
   const { toast } = useToast();
 
-  const handleVideoUpload = async (file: File) => {
+  const handleVideoUpload = async (result: DetectionResponse) => {
     setIsProcessing(true);
-    setResults(null);
-
-    try {
-      // Simulate processing for now - replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Mock response - replace with actual backend call
-      const mockResponse: DetectionResponse = {
-        person_detected: Math.random() > 0.5,
-        detections: [
-          {
-            label: "person",
-            confidence: 0.85,
-            box: [120, 80, 250, 320],
-          },
-          {
-            label: "forklift",
-            confidence: 0.92,
-            box: [300, 100, 480, 400],
-          },
-        ],
-      };
-
-      setResults(mockResponse);
-
-      toast({
-        title: "Analysis Complete",
-        description: "Video frame has been successfully analyzed.",
-      });
-    } catch (error) {
-      toast({
-        title: "Analysis Failed",
-        description: "An error occurred while processing the video.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessing(false);
-    }
+    setResults(result);
+    setIsProcessing(false);
   };
 
   return (
@@ -153,6 +123,7 @@ const Index = () => {
             <DetectionResults
               personDetected={results.person_detected}
               detections={results.detections}
+              frame={results.frame}
             />
           </div>
         )}

@@ -1,24 +1,65 @@
+import { useEffect, useRef } from "react";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { drawDetectionsOnCanvas } from "@/lib/objectDetection";
 
 interface Detection {
   label: string;
-  confidence: number;
-  box: number[];
+  score: number;
+  box: {
+    xmin: number;
+    ymin: number;
+    xmax: number;
+    ymax: number;
+  };
 }
 
 interface DetectionResultsProps {
   personDetected: boolean;
   detections: Detection[];
+  frame?: string;
 }
 
 export const DetectionResults = ({
   personDetected,
   detections,
+  frame,
 }: DetectionResultsProps) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!frame || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      
+      // Draw detections and overlay
+      drawDetectionsOnCanvas(canvas, detections, personDetected);
+    };
+    img.src = frame;
+  }, [frame, detections, personDetected]);
   return (
     <div className="space-y-6">
+      {/* Detection Visualization */}
+      {frame && (
+        <Card className="p-4 bg-card shadow-md">
+          <div className="relative w-full rounded-lg overflow-hidden border-2 border-border">
+            <canvas 
+              ref={canvasRef} 
+              className="w-full h-auto"
+            />
+          </div>
+        </Card>
+      )}
+
       {/* Alert Card */}
       <Card
         className={`p-6 ${
@@ -76,11 +117,11 @@ export const DetectionResults = ({
                     {detection.label}
                   </Badge>
                   <span className="text-sm text-foreground">
-                    Confidence: {(detection.confidence * 100).toFixed(1)}%
+                    Confidence: {(detection.score * 100).toFixed(1)}%
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground font-mono">
-                  [{detection.box.map((v) => v.toFixed(0)).join(", ")}]
+                  [{detection.box.xmin.toFixed(0)}, {detection.box.ymin.toFixed(0)}, {detection.box.xmax.toFixed(0)}, {detection.box.ymax.toFixed(0)}]
                 </div>
               </div>
             ))
