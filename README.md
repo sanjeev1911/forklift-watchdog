@@ -1,73 +1,107 @@
-# Welcome to your Lovable project
+# Forklift Safety AI
 
-## Project info
+Advanced AI-powered forklift safety system that detects people near forklifts and triggers automatic braking to prevent workplace accidents.
 
-**URL**: https://lovable.dev/projects/9d9a4947-0145-467a-bb93-ee79095d9cdc
+## Features
 
-## How can I edit this code?
+- **Real-time Person Detection**: Uses YOLOv5-style AI models to detect people in video footage
+- **Automatic Brake Triggering**: Visual alerts when a person is detected near the forklift
+- **Browser-based Processing**: All AI processing happens directly in your browser
+- **Download Annotated Frames**: Save analyzed frames with bounding boxes and alerts
 
-There are several ways of editing your application.
+## Technologies Used
 
-**Use Lovable**
+- **React** - UI framework
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool
+- **Tailwind CSS** - Styling
+- **shadcn/ui** - UI components
+- **Hugging Face Transformers** - AI object detection models
+- **Supabase** - Backend infrastructure
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9d9a4947-0145-467a-bb93-ee79095d9cdc) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 18+ and npm
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Clone the repository:
+```bash
+git clone <your-repo-url>
+cd forklift-safety-ai
+```
 
-Follow these steps:
+2. Install dependencies:
+```bash
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Open your browser to `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Deployment
 
-**Use GitHub Codespaces**
+### GitHub Pages
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This project is configured to automatically deploy to GitHub Pages when you push to the main branch.
 
-## What technologies are used for this project?
+#### Setup Steps:
 
-This project is built with:
+1. Go to your repository Settings > Pages
+2. Under "Build and deployment", select "GitHub Actions" as the source
+3. Push to the main branch to trigger automatic deployment
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Your site will be available at: `https://<username>.github.io/<repository-name>`
 
-## How can I deploy this project?
+### Custom Domain
 
-Simply open [Lovable](https://lovable.dev/projects/9d9a4947-0145-467a-bb93-ee79095d9cdc) and click on Share -> Publish.
+To use a custom domain:
+1. Add a `CNAME` file in the `public` folder with your domain
+2. Configure DNS settings with your domain provider
+3. Enable "Enforce HTTPS" in GitHub Pages settings
 
-## Can I connect a custom domain to my Lovable project?
+## Usage
 
-Yes, you can!
+1. Click "Upload Video" to select a forklift surveillance video
+2. Click "Analyze Video" to process the first frame
+3. The AI will detect people and display bounding boxes
+4. If a person is detected, a "BRAKES TRIGGERED" alert appears
+5. Download the annotated frame for your records
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Development
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```bash
+# Start dev server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run linter
+npm run lint
+```
+
+## Project Structure
+
+```
+├── src/
+│   ├── components/      # React components
+│   ├── lib/            # Utility functions and AI detection
+│   ├── pages/          # Page components
+│   └── integrations/   # External integrations
+├── public/             # Static assets
+└── supabase/          # Backend configuration
+```
+
+## License
+
+MIT
